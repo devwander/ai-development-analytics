@@ -274,9 +274,11 @@ Esta ferramenta foi desenvolvida e usada como instrumento de coleta no Trabalho 
 Graduação "Esforço, Produtividade e Percepção de Qualidade no Desenvolvimento de
 Software com um Agente de Codificação por IA: um Estudo de Caso Longitudinal"
 (Sistemas de Informação, UPE Campus Caruaru, 2026). A versão usada no estudo é a
-tag `v1.0-tcc`. Os scripts de análise, os resultados agregados e os instrumentos
+tag `v1.0-tcc`, arquivada no Zenodo com DOI
+[10.5281/zenodo.24278833](https://doi.org/10.5281/zenodo.24278833). Os scripts de análise, os resultados agregados e os instrumentos
 estão no pacote de replicação do trabalho:
-<https://github.com/devwander/tcc-agente-codificacao-replicacao>.
+<https://github.com/devwander/tcc-agente-codificacao-replicacao>
+(DOI [10.5281/zenodo.24278835](https://doi.org/10.5281/zenodo.24278835)).
 
 Os dados de sessão do estudo não são publicados: pertencem a um produto clínico
 sujeito à LGPD. Para citar a ferramenta, use o arquivo `CITATION.cff`.
