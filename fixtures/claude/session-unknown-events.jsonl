@@ -1,0 +1,5 @@
+{"type":"user","uuid":"u1","sessionId":"33333333-3333-3333-3333-333333333333","timestamp":"2026-08-03T08:00:00.000Z","cwd":"/tmp/proj3","origin":{"kind":"human"},"promptSource":"typed","message":{"role":"user","content":"oi"}}
+{"type":"quantum-telemetry-v9","sessionId":"33333333-3333-3333-3333-333333333333","payload":{"whatever":true}}
+{"type":"another-future-event","sessionId":"33333333-3333-3333-3333-333333333333"}
+{"type":"quantum-telemetry-v9","sessionId":"33333333-3333-3333-3333-333333333333","payload":{}}
+{"type":"assistant","uuid":"a1","sessionId":"33333333-3333-3333-3333-333333333333","timestamp":"2026-08-03T08:00:03.000Z","message":{"id":"m1","role":"assistant","model":"claude-sonnet-5","content":[{"type":"text","text":"ola"}],"usage":{"input_tokens":1,"output_tokens":1,"cache_creation_input_tokens":0,"cache_read_input_tokens":0}}}

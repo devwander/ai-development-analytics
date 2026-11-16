@@ -1,0 +1,63 @@
+# The collector needs the developer's local Claude Code data, which lives
+# outside any container. On Linux that means a read-only bind mount of
+# ~/.claude - the collector must never be able to modify the raw transcripts.
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: ai-analytics-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-analytics}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-analytics}
+      POSTGRES_DB: ${POSTGRES_DB:-ai_analytics}
+    ports:
+      # 5434 on the host: 5432 and 5433 are commonly already taken on a dev machine.
+      - "${POSTGRES_PORT:-5434}:5432"
+    volumes:
+      # postgres:18+ expects the mount at /var/lib/postgresql (not .../data):
+      # it stores data in a major-version subdirectory so pg_upgrade --link works.
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-analytics} -d ${POSTGRES_DB:-ai_analytics}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: ai-analytics-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-analytics}:${POSTGRES_PASSWORD:-analytics}@postgres:5432/${POSTGRES_DB:-ai_analytics}
+      CLAUDE_DATA_PATH: /claude-data
+      CCUSAGE_BIN: ${CCUSAGE_BIN:-ccusage}
+      AI_ANALYSIS_ENABLED: ${AI_ANALYSIS_ENABLED:-false}
+    volumes:
+      # Raw session data, read-only. See ADR 0004.
+      - ${CLAUDE_HOME:-${HOME}/.claude}:/claude-data:ro
+      # Projects, read-only: the git collector only ever reads.
+      - ${PROJECTS_ROOT:-${HOME}}:/projects:ro
+      - ./reports:/app/reports
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    # The API is read-only over the database. Collection runs through the CLI:
+    #   docker compose exec backend python -m app.cli.main sync
+    # ccusage is a Node CLI on the host and is not installed in this image, so
+    # the containerised collector falls back to transcript-derived usage.
+    # Run the CLI on the host when ccusage figures are needed.
+
+  frontend:
+    build: ./frontend
+    container_name: ai-analytics-frontend
+    depends_on:
+      - backend
+    environment:
+      # Server-side fetches run inside the compose network, so this is the
+      # service name - not localhost, which would be the container itself.
+      API_URL: http://backend:8000
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+
+volumes:
+  postgres_data:

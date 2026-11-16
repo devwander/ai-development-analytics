@@ -1,0 +1,708 @@
+/*
+ * Design tokens.
+ *
+ * Colours come from a validated palette: the categorical order passes the
+ * adjacent-pair CVD and normal-vision gates in both modes. Dark values are
+ * separately chosen steps for the dark surface, not an automatic inversion.
+ *
+ * On the light surface three categorical slots sit below 3:1 contrast, so every
+ * chart that uses them ships visible labels and a table view - identity is
+ * never carried by colour alone.
+ */
+
+:root {
+  color-scheme: light;
+
+  --surface-1: #fcfcfb;
+  --page: #f9f9f7;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #898781;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --border: rgba(11, 11, 11, 0.1);
+  --wash: rgba(11, 11, 11, 0.04);
+
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --series-5: #e87ba4;
+  --series-6: #008300;
+  --series-7: #4a3aa7;
+  --series-8: #e34948;
+
+  /* Sequential blue ramp, for magnitude. */
+  --seq-250: #86b6ef;
+  --seq-450: #2a78d6;
+  --seq-600: #184f95;
+
+  /* Meter: the unfilled track is a much lighter step of the fill's own ramp.
+     Adjacent steps look identical at 10px tall, which makes a low reading
+     indistinguishable from a full one. */
+  --meter-track: #cde2fb;
+  --meter-fill: #2a78d6;
+
+  --status-good: #0ca30c;
+  --status-warning: #fab219;
+  --status-serious: #ec835a;
+  --status-critical: #d03b3b;
+
+  --radius: 10px;
+  --font: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+
+    --surface-1: #1a1a19;
+    --page: #0d0d0d;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #898781;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255, 255, 255, 0.1);
+    --wash: rgba(255, 255, 255, 0.05);
+
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+    --series-6: #008300;
+    --series-7: #9085e9;
+    --series-8: #e66767;
+
+    --seq-250: #184f95;
+    --seq-450: #3987e5;
+    --seq-600: #86b6ef;
+
+    --meter-track: #10203a;
+    --meter-fill: #3987e5;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --surface-1: #1a1a19;
+  --page: #0d0d0d;
+  --text-primary: #ffffff;
+  --text-secondary: #c3c2b7;
+  --text-muted: #898781;
+  --grid: #2c2c2a;
+  --axis: #383835;
+  --border: rgba(255, 255, 255, 0.1);
+  --wash: rgba(255, 255, 255, 0.05);
+
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-6: #008300;
+  --series-7: #9085e9;
+  --series-8: #e66767;
+
+  --seq-250: #184f95;
+  --seq-450: #3987e5;
+  --seq-600: #86b6ef;
+
+  --meter-track: #10203a;
+  --meter-fill: #3987e5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--page);
+  color: var(--text-primary);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* -- layout ------------------------------------------------------------ */
+.shell {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px 64px;
+}
+
+.topbar {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-1);
+  margin-bottom: 28px;
+}
+
+.topbar-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: baseline;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.brand span {
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-left: 8px;
+  font-size: 12px;
+}
+
+.nav {
+  display: flex;
+  gap: 20px;
+}
+
+.nav a {
+  color: var(--text-secondary);
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
+}
+
+.nav a:hover {
+  color: var(--text-primary);
+}
+
+.nav a[aria-current="page"] {
+  color: var(--text-primary);
+  border-bottom-color: var(--series-1);
+}
+
+h1 {
+  font-size: 22px;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  margin: 0 0 4px;
+}
+
+h2 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 2px;
+}
+
+.page-note {
+  color: var(--text-secondary);
+  margin: 0 0 24px;
+  max-width: 70ch;
+}
+
+.section {
+  margin-top: 32px;
+}
+
+.card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+
+.card-head {
+  margin-bottom: 14px;
+}
+
+.card-head p {
+  margin: 2px 0 0;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 16px;
+}
+
+/* -- stat tiles -------------------------------------------------------- */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.stat {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+
+.stat-label {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-size: 26px;
+  font-weight: 620;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.stat-note {
+  color: var(--text-muted);
+  font-size: 11px;
+  margin-top: 5px;
+}
+
+.hero .stat-value {
+  font-size: 48px;
+}
+
+/* -- tables ------------------------------------------------------------ */
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th {
+  text-align: left;
+  font-weight: 550;
+  color: var(--text-secondary);
+  padding: 8px 12px 8px 0;
+  border-bottom: 1px solid var(--axis);
+  white-space: nowrap;
+}
+
+td {
+  padding: 9px 12px 9px 0;
+  border-bottom: 1px solid var(--grid);
+  vertical-align: top;
+}
+
+tbody tr:hover td {
+  background: var(--wash);
+}
+
+/* Every column after the first needs left padding of its own: a right-aligned
+   cell drops its right padding to line the digits up with the column edge, so
+   without this the number butts straight into the next column's label. */
+th + th,
+td + td {
+  padding-left: 18px;
+}
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  padding-right: 0;
+  /* A currency value must never wrap between the symbol and the digits. */
+  white-space: nowrap;
+}
+
+th.num {
+  text-align: right;
+  padding-right: 0;
+}
+
+.cell-strong {
+  font-weight: 550;
+}
+
+.cell-sub {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* -- conversation ------------------------------------------------------- */
+.turns {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.turn {
+  border-left: 3px solid var(--grid);
+  padding: 2px 0 2px 14px;
+}
+
+/* The developer's turn has to be findable while scrolling a long session. */
+.turn-prompt {
+  border-left-color: var(--series-1);
+}
+
+.turn-assistant {
+  border-left-color: var(--grid);
+}
+
+.turn-tool {
+  border-left-color: transparent;
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding-left: 17px;
+}
+
+.turn-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.turn-prompt .turn-meta strong {
+  color: var(--series-1);
+}
+
+.turn-assistant .turn-meta strong {
+  color: var(--text-secondary);
+}
+
+/* -- session download selector ------------------------------------------ */
+.download-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.download-select-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.download-bar button {
+  font: inherit;
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-1);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.download-bar button:hover:not(:disabled) {
+  background: var(--wash);
+}
+
+.download-bar button:disabled {
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.select-col {
+  width: 1%;
+  padding-right: 0;
+}
+
+/* -- period filter ------------------------------------------------------ */
+/* One row, left-aligned, above everything it scopes. */
+.period {
+  margin-bottom: 22px;
+}
+
+.period-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.period-label {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-right: 2px;
+}
+
+.period-row > a {
+  font-size: 12px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.period-row > a:hover {
+  background: var(--wash);
+  color: var(--text-primary);
+}
+
+.period-row > a[aria-current="true"] {
+  border-color: var(--series-1);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.period-custom {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 6px;
+  padding-left: 14px;
+  border-left: 1px solid var(--border);
+}
+
+.period-custom label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.period-custom input[type="date"] {
+  font: inherit;
+  font-size: 12px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface-1);
+  color: var(--text-primary);
+  color-scheme: inherit;
+}
+
+.period-custom button {
+  font: inherit;
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-1);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.period-custom button:hover {
+  background: var(--wash);
+  color: var(--text-primary);
+}
+
+.period-note {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  max-width: 78ch;
+}
+
+/* -- field hints -------------------------------------------------------- */
+/* Recessive by default: the definition is there when wanted and never competes
+   with the value it explains. */
+.hint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 13px;
+  height: 13px;
+  margin-left: 5px;
+  border-radius: 50%;
+  border: 1px solid var(--axis);
+  color: var(--text-muted);
+  font-size: 9px;
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1;
+  cursor: help;
+  vertical-align: middle;
+  flex: none;
+  user-select: none;
+}
+
+.hint:hover,
+.hint:focus-visible {
+  border-color: var(--series-1);
+  color: var(--text-primary);
+  outline: none;
+}
+
+/* -- misc -------------------------------------------------------------- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.pill-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.mono {
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+.empty {
+  color: var(--text-muted);
+  padding: 22px 0;
+  text-align: center;
+  font-size: 13px;
+}
+
+.notice {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--status-warning);
+  border-radius: 6px;
+  background: var(--surface-1);
+  padding: 12px 14px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.notice-error {
+  border-left-color: var(--status-critical);
+}
+
+.notice strong {
+  color: var(--text-primary);
+}
+
+.prose {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.filters a {
+  font-size: 12px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.filters a[aria-current="true"] {
+  border-color: var(--series-1);
+  color: var(--text-primary);
+  font-weight: 550;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex: none;
+}
+
+details.table-view > summary {
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-top: 14px;
+}
+
+details.table-view[open] > summary {
+  margin-bottom: 10px;
+}
+
+.pager {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.pager a {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 12px;
+}
+
+.back-link {
+  color: var(--text-secondary);
+  font-size: 13px;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.back-link:hover {
+  color: var(--text-primary);
+}
+
+.def-grid {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 18px;
+  font-size: 13px;
+}
+
+.def-grid dt {
+  color: var(--text-secondary);
+}
+
+.def-grid dd {
+  margin: 0;
+}

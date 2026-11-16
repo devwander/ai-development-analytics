@@ -1,0 +1,23 @@
+# Never commit real credentials or real session data.
+.env
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+reports/*.json
+!reports/.gitkeep
+
+# Archived transcripts: the raw research data, ~120 MB and growing.
+# Kept out of git deliberately - it is private session content, and a
+# repository is the wrong place to version it. Back it up separately.
+archive/
+
+node_modules/
+.next/
+
+# Local-only / generated
+.claude/settings.local.json
+frontend/tsconfig.tsbuildinfo
+
+# Database backups (local only)
+backups/
